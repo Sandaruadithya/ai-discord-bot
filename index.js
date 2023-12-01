@@ -1,11 +1,7 @@
 const { DiscussServiceClient } = require("@google-ai/generativelanguage")
 const { Client, Events, GatewayIntentBits } = require('discord.js')
 const { GoogleAuth } = require("google-auth-library")
-const express = require("express")
 require("dotenv").config()
-
-const app = express()
-app.use(express.json())
 
 const MODEL_NAME = "models/chat-bison-001"
 const API_KEY = process.env.API_KEY
@@ -46,9 +42,5 @@ const BATMAN = async (prompt) => {
 
     return result[0].candidates[0].content
 }
-
-app.listen(3000, () => {
-    console.log("Listening to port 3000")
-})
 
 DISCORD_Client.login(process.env.DISCORD_TOKEN)
