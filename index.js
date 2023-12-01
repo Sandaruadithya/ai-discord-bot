@@ -13,7 +13,7 @@ const PALM_Client = new DiscussServiceClient({
 })
 
 DISCORD_Client.on("messageCreate", async (message) => {
-    if(message.author.bot) return
+    if(message.author.bot || message.author.id === DISCORD_Client.user.id) return
     if (message.content) {
         message.channel.sendTyping()
         const response = await BATMAN(message.content)
