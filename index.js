@@ -1,4 +1,5 @@
 const { DiscussServiceClient } = require("@google-ai/generativelanguage")
+const { Client, Events, GatewayIntentBits } = require('discord.js')
 const { GoogleAuth } = require("google-auth-library")
 const express = require("express")
 require("dotenv").config()
@@ -9,12 +10,23 @@ app.use(express.json())
 const MODEL_NAME = "models/chat-bison-001"
 const API_KEY = process.env.API_KEY
 
-const client = new DiscussServiceClient({
+const DISCORD_Client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMessageTyping] })
+
+const PALM_Client = new DiscussServiceClient({
     authClient: new GoogleAuth().fromAPIKey(API_KEY),
 })
 
+DISCORD_Client.on("messageCreate", async (message) => {
+    if(message.author.bot) return
+    if (message.content) {
+        message.channel.sendTyping()
+        const response = await BATMAN(message.content)
+        message.channel.send(response)
+    }
+})
+
 const BATMAN = async (prompt) => {
-    const result = await client.generateMessage({
+    const result = await PALM_Client.generateMessage({
         model: MODEL_NAME,
         temperature: 0.5,
         candidateCount: 1,
@@ -35,12 +47,8 @@ const BATMAN = async (prompt) => {
     return result[0].candidates[0].content
 }
 
-app.post("/BATMAN", async (req, res) => {
-    const { prompt } = req.body
-    const data = await BATMAN(prompt)
-    res.json({ status: 200, response: data })
-})
-
 app.listen(3000, () => {
     console.log("Listening to port 3000")
 })
+
+DISCORD_Client.login(process.env.DISCORD_TOKEN)
