@@ -1,7 +1,6 @@
 const { DiscussServiceClient } = require("@google-ai/generativelanguage")
 const { GoogleAuth } = require("google-auth-library")
 const express = require("express")
-const { status } = require("express/lib/response")
 require("dotenv").config()
 
 const app = express()
@@ -39,7 +38,7 @@ const BATMAN = async (prompt) => {
 app.post("/BATMAN", async (req, res) => {
     const { prompt } = req.body
     const data = await BATMAN(prompt)
-    res.json({status: 200, response: data})
+    res.json({ status: 200, response: data })
 })
 
 app.listen(3000, () => {
