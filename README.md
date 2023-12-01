@@ -8,3 +8,10 @@ This is a simple discord bot made using Google's Palm 2. The setup was easy and 
 - Node JS
 - Discord JS
 - Palm 2 API
+
+## Changelog
+- v1 - Replies to all messages in all channels.
+- v1.1 - Only replies to @mentions in all channels.
+
+## Bugs
+- Sends double messages sometimes.
