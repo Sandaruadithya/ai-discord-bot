@@ -12,6 +12,7 @@ This is a simple discord bot made using Google's Palm 2. The setup was easy and 
 ## Changelog
 - v1 - Replies to all messages in all channels.
 - v1.1 - Only replies to @BATMAN in all channels.
+- v1.2 - Replies directly with an @mention.
 
 ## Bugs
 - Sends double messages sometimes.
