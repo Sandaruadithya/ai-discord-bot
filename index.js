@@ -1,6 +1,7 @@
-const { Client, Events, GatewayIntentBits, userMention } = require('discord.js')
+const { Client, Events, GatewayIntentBits, userMention, REST, Routes } = require('discord.js')
 const { DiscussServiceClient } = require("@google-ai/generativelanguage")
 const { GoogleAuth } = require("google-auth-library")
+const { batgif } = require("./commands/batgif")
 require("dotenv").config()
 
 const MODEL_NAME = "models/chat-bison-001"
@@ -13,7 +14,6 @@ const PALM_Client = new DiscussServiceClient({
 })
 
 DISCORD_Client.on("messageCreate", async (message) => {
-    console.log(message.author.id)
     if (message.author.bot || message.author.id === DISCORD_Client.user.id) return
     if (message.content && message.mentions.users.some((user) => user.username === DISCORD_Client.user.username)) {
         message.channel.sendTyping()
@@ -21,6 +21,8 @@ DISCORD_Client.on("messageCreate", async (message) => {
         message.channel.send(`<@${message.author.id}> ${response}`)
     }
 })
+
+DISCORD_Client.on('interactionCreate', batgif)
 
 const BATMAN = async (prompt) => {
     const result = await PALM_Client.generateMessage({
@@ -43,5 +45,30 @@ const BATMAN = async (prompt) => {
 
     return result[0].candidates[0].content
 }
+
+const commands = [
+    {
+        name: 'batgif',
+        description: 'Sends a gif related to Batman',
+        type: 1,
+    },
+]
+
+const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN)
+
+DISCORD_Client.once('ready', async () => {
+    try {
+        console.log('Started refreshing application (/) commands.')
+
+        await rest.put(
+            Routes.applicationCommands(DISCORD_Client.user.id),
+            { body: commands },
+        )
+
+        console.log('Successfully reloaded application (/) commands.')
+    } catch (error) {
+        console.error(error)
+    }
+})
 
 DISCORD_Client.login(process.env.DISCORD_TOKEN)
