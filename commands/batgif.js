@@ -11,7 +11,7 @@ module.exports = {
         const gifs = await response.json()
         await interaction.reply(gifs.data[random].url)
       } catch (error) {
-        await interaction.reply('Something isn\'t working with my bat wifi...');
+        await interaction.reply('The Joker! He has hacked my GIF signal!');
       }
     }
   }
