@@ -14,6 +14,7 @@ This is a simple discord bot made using Google's Palm 2. The setup was easy and 
 - v1.1 - Only replies to ```@BATMAN``` in all channels.
 - v1.2 - Replies directly with an ```@mention```.
 - v1.3 - Now supports ```/batgifs``` command
+- v1.3.1 - Added error handling to prevent crashes
 
 ## Bugs
 - Sends double messages sometimes.
