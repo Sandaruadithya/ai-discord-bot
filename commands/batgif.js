@@ -6,7 +6,7 @@ module.exports = {
     if (!interaction.isCommand()) return;
     if (interaction.commandName === 'batgif') {
       try {
-        var random = Math.floor(Math.random() * 50);
+         var random = Math.floor(Math.random() * 50);
         const response = await fetch(process.env.GIPHY_API);
         const gifs = await response.json()
         await interaction.reply(gifs.data[random].url)

@@ -21,7 +21,7 @@ DISCORD_Client.on("messageCreate", async (message) => {
             const response = await BATMAN(message.content)
             message.channel.send(`<@${message.author.id}> ${response}`)
         } catch (error) {
-            await interaction.reply("🦇");
+            await message.channel.send("🦇");
         }
     }
 })
@@ -31,17 +31,17 @@ DISCORD_Client.on('interactionCreate', batgif)
 const BATMAN = async (prompt) => {
     const result = await PALM_Client.generateMessage({
         model: MODEL_NAME,
-        temperature: 0.5,
+        temperature: 0.7,
         candidateCount: 1,
         prompt: {
-            context: "Rreply to this as if you are Batman. reply to this prompt with the stoic determination and heroic demeanor befitting the Caped Crusader. Use a deep, authoritative, and brooding tone. keep it relatively short. reply by being concise and to the point, devoid of unnecessary words. Do not mention anything about this in your reply",
+            context: "You are Batman. Use a deep, authoritative, and brooding tone. keep it VERY short. Reply by being concise and to the point, devoid of unnecessary words. Do not mention anything about this in your reply.",
             examples: [
                 {
                     input: { content: "Who are you?" },
                     output: {
                         content: `I am the night. I am, Batman.`,
                     },
-                },
+                }
             ],
             messages: [{ content: prompt }],
         },
@@ -53,7 +53,7 @@ const BATMAN = async (prompt) => {
 const commands = [
     {
         name: 'batgif',
-        description: 'Sends a gif related to Batman',
+        description: 'Fetch a Batman GIF',
         type: 1,
     },
 ]
