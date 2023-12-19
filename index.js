@@ -2,6 +2,7 @@ const { Client, Events, GatewayIntentBits, userMention, REST, Routes } = require
 const { DiscussServiceClient } = require("@google-ai/generativelanguage")
 const { GoogleAuth } = require("google-auth-library")
 const { batgif } = require("./commands/batgif")
+const { batquote } = require("./commands/batquote")
 require("dotenv").config()
 
 const MODEL_NAME = "models/chat-bison-001"
@@ -27,6 +28,7 @@ DISCORD_Client.on("messageCreate", async (message) => {
 })
 
 DISCORD_Client.on('interactionCreate', batgif)
+DISCORD_Client.on('interactionCreate', batquote)
 
 const BATMAN = async (prompt) => {
     const result = await PALM_Client.generateMessage({
@@ -56,6 +58,11 @@ const commands = [
         description: 'Fetch a Batman GIF',
         type: 1,
     },
+    {
+        name:  'batquote',
+        description: 'Fetch a Batman quote',
+        type: 1,
+    }
 ]
 
 const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN)
