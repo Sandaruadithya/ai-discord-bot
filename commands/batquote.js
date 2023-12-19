@@ -1,6 +1,8 @@
 const { SlashCommandBuilder } = require("discord.js")
 require("dotenv").config()
 
+
+// Wasn't able to find a Batman quote api so here we are
 const quotes = [
     "\"That Mask, It’s Not To Hide Who I Am, But To Create What I Am.\"",
     "\"The Idea Was To Be A Symbol. Batman Could Be Anybody, That Was The Point.\"",
@@ -17,17 +19,18 @@ const quotes = [
     "\"Vengeance Won't Change The Past. I Have To Become More\"",
 ]
 
+
+// Randomize and send a quote
 module.exports = {
-  batquote: async (interaction) => {
-    if (!interaction.isCommand()) return;
-    if (interaction.commandName === 'batquote') {
-      try {
-         var random = Math.floor(Math.random() * 13);
-        await interaction.reply(quotes[random])
-        
-      } catch (error) {
-        await interaction.reply('The Joker! He has hacked my quote signal!');
-      }
+    batquote: async (interaction) => {
+        if (!interaction.isCommand()) return;
+        if (interaction.commandName === 'batquote') {
+            try {
+                var random = Math.floor(Math.random() * 13);
+                await interaction.reply(quotes[random])
+            } catch (error) {
+                await interaction.reply('The Joker! He has hacked my quote signal!');
+            }
+        }
     }
-  }
 }

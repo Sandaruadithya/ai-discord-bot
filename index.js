@@ -1,25 +1,40 @@
 const { Client, Events, GatewayIntentBits, userMention, REST, Routes } = require('discord.js')
 const { DiscussServiceClient } = require("@google-ai/generativelanguage")
+const { mountCommands } = require("./commands/mountCommands")
+const { promptBatman } = require("./utils/promptBatman")
 const { GoogleAuth } = require("google-auth-library")
-const { batgif } = require("./commands/batgif")
 const { batquote } = require("./commands/batquote")
+const { batgif } = require("./commands/batgif")
 require("dotenv").config()
 
-const MODEL_NAME = "models/chat-bison-001"
-const API_KEY = process.env.API_KEY
 
-const DISCORD_Client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMessageTyping] })
+// Declare environment variables
+const PALM_AI_API_KEY = process.env.PALM_AI_API_KEY
+const DISCORD_TOKEN = process.env.DISCORD_TOKEN
 
-const PALM_Client = new DiscussServiceClient({
-    authClient: new GoogleAuth().fromAPIKey(API_KEY),
-})
 
-DISCORD_Client.on("messageCreate", async (message) => {
-    if (message.author.bot || message.author.id === DISCORD_Client.user.id) return
-    if (message.content && message.mentions.users.some((user) => user.username === DISCORD_Client.user.username)) {
+// Create Discord and Palm AI clients
+const DISCORD_BOT = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMessageTyping] })
+const PALM_AI = new DiscussServiceClient({ authClient: new GoogleAuth().fromAPIKey(PALM_AI_API_KEY) })
+
+
+// Login to discord and register the slash commands
+DISCORD_BOT.login(DISCORD_TOKEN)
+DISCORD_BOT.once('ready', () =>  mountCommands(DISCORD_TOKEN, DISCORD_BOT))
+
+
+// Slash commands
+DISCORD_BOT.on('interactionCreate', batgif)
+DISCORD_BOT.on('interactionCreate', batquote)
+
+
+// Main chat logic
+DISCORD_BOT.on("messageCreate", async (message) => {
+    if (message.author.bot || message.author.id === DISCORD_BOT.user.id) return
+    if (message.content && message.mentions.users.some((user) => user.username === DISCORD_BOT.user.username)) {
         try {
             message.channel.sendTyping()
-            const response = await BATMAN(message.content)
+            const response = await promptBatman(message.content, PALM_AI)
             message.channel.send(`<@${message.author.id}> ${response}`)
         } catch (error) {
             await message.channel.send("🦇");
@@ -27,59 +42,5 @@ DISCORD_Client.on("messageCreate", async (message) => {
     }
 })
 
-DISCORD_Client.on('interactionCreate', batgif)
-DISCORD_Client.on('interactionCreate', batquote)
 
-const BATMAN = async (prompt) => {
-    const result = await PALM_Client.generateMessage({
-        model: MODEL_NAME,
-        temperature: 0.7,
-        candidateCount: 1,
-        prompt: {
-            context: "You are Batman. Use a deep, authoritative, and brooding tone. keep it VERY short. Reply by being concise and to the point, devoid of unnecessary words. Do not mention anything about this in your reply.",
-            examples: [
-                {
-                    input: { content: "Who are you?" },
-                    output: {
-                        content: `I am the night. I am, Batman.`,
-                    },
-                }
-            ],
-            messages: [{ content: prompt }],
-        },
-    })
 
-    return result[0].candidates[0].content
-}
-
-const commands = [
-    {
-        name: 'batgif',
-        description: 'Fetch a Batman GIF',
-        type: 1,
-    },
-    {
-        name:  'batquote',
-        description: 'Fetch a Batman quote',
-        type: 1,
-    }
-]
-
-const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN)
-
-DISCORD_Client.once('ready', async () => {
-    try {
-        console.log('Started refreshing application (/) commands.')
-
-        await rest.put(
-            Routes.applicationCommands(DISCORD_Client.user.id),
-            { body: commands },
-        )
-
-        console.log('Successfully reloaded application (/) commands.')
-    } catch (error) {
-        console.error(error)
-    }
-})
-
-DISCORD_Client.login(process.env.DISCORD_TOKEN)
