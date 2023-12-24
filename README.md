@@ -9,6 +9,20 @@ This is a simple discord bot made using Google's Palm 2. The setup was easy and 
 - Discord JS
 - Palm 2 API
 
+## Getting Started
+
+First, fork and clone the repo, and install all the required dependencies by running ```npm install```. Then make a ```.env``` file in the root of your project and add the following variables:
+
+```
+PALM_AI_API_KEY
+DISCORD_TOKEN
+GIPHY_API_KEY
+```
+
+Finally Start the app by running ```node index.js``` or ```node .```
+
+Learning Resources
+
 ## Changelog
 - v1 - Replies to all messages in all channels.
 - v1.1 - Only replies to ```@BATMAN``` in all channels.
