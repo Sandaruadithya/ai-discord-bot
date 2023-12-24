@@ -21,8 +21,6 @@ GIPHY_API_KEY
 
 Finally Start the app by running ```node index.js``` or ```node .```
 
-Learning Resources
-
 ## Changelog
 - v1 - Replies to all messages in all channels.
 - v1.1 - Only replies to ```@BATMAN``` in all channels.
